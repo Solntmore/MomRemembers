@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RequestNoteDto {
+public class NewRequestNoteDto {
 
         @Length(min = 10, max = 20)
         @NotBlank
