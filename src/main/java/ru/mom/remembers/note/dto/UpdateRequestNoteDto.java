@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.PrePersist;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -19,16 +20,18 @@ public class UpdateRequestNoteDto {
     @NotNull
     private Long id;
 
-    @Length(min = 10, max = 20)
-    @NotNull
+    @NotBlank
+    @Length(min = 1, max = 50)
     private String name;
 
     @Length(max = 200)
-    @NotNull
     private String description;
 
+    @NotBlank
+    @Length(min = 1, max = 200)
     private String location;
 
+    @Length(max = 200)
     private String season;
 
     private LocalDateTime created;

@@ -20,13 +20,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ShortResponseNoteDto {
 
-    @NotNull
     private Long id;
 
-    @NotNull
     private String name;
 
-    @NotNull
     private String location;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

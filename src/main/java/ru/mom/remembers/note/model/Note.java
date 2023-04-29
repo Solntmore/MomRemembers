@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Builder
@@ -15,25 +14,30 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "NOTE_T")
+@Table(name = "Notes")
 public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Length(min = 10, max = 20)
-    @NotBlank
+    @Length(min = 1, max = 50)
+    @Column(name = "name", length = 50, nullable = false)
     private String name;
 
     @Length(max = 200)
-    private String description;
+    @Column(name = "description", length = 200)
+    private String description = " ";
 
-    @NotBlank
+    @Length(min = 1, max = 200)
+    @Column(name = "location", length = 200, nullable = false)
     private String location;
 
-    private String season;
+    @Length(min = 1, max = 200)
+    @Column(name = "season", length = 200)
+    private String season = " ";
 
+    @Column(name = "created")
     private LocalDateTime created;
 
     @PrePersist

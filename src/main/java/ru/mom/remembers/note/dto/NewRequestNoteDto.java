@@ -9,20 +9,20 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class NewRequestNoteDto {
 
-        @Length(min = 10, max = 20)
         @NotBlank
+        @Length(min = 1, max = 50)
         private String name;
 
         @Length(max = 200)
         private String description;
 
         @NotBlank
+        @Length(min = 1, max = 200)
         private String location;
 
+        @Length(max = 30)
         private String season;
 
 }

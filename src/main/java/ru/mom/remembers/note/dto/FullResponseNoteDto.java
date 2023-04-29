@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,15 +19,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FullResponseNoteDto {
 
-    @NotNull
     private Long id;
 
-    @NotNull
     private String name;
 
     private String description;
 
-    @NotNull
     private String location;
 
     private String season;
