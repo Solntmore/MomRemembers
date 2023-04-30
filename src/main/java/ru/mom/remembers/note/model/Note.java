@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Notes")
+@Table(name = "Note")
 public class Note {
 
     @Id
@@ -27,7 +27,7 @@ public class Note {
 
     @Length(max = 200)
     @Column(name = "description", length = 200)
-    private String description = " ";
+    private String description;
 
     @Length(min = 1, max = 200)
     @Column(name = "location", length = 200, nullable = false)
@@ -35,7 +35,7 @@ public class Note {
 
     @Length(min = 1, max = 200)
     @Column(name = "season", length = 200)
-    private String season = " ";
+    private String season;
 
     @Column(name = "created")
     private LocalDateTime created;
