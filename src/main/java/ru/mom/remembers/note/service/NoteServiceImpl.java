@@ -22,13 +22,11 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public FullResponseNoteDto getNote(Long id) {
 
-        var noteOptional = notePersistService.getNote(id);
-        if (noteOptional.isEmpty()) {
-            throw new NotFoundException("The required object was not found.",
-                    String.format("Note with id = %s was not found", id));
-        }
+        var note = notePersistService.getNote(id).orElseThrow(() ->
+                new NotFoundException("The required object was not found.",
+                        String.format("Note with id = %s was not found", id)));
 
-        return noteMapper.toFullNote(noteOptional.get());
+        return noteMapper.toFullNote(note);
     }
 
     @Override
@@ -82,11 +80,10 @@ public class NoteServiceImpl implements NoteService {
 
     private Note findNote(Long id) {
 
-        var noteOptional = notePersistService.getNote(id);
-        if (noteOptional.isEmpty()) {
-            throw new NotFoundException("The required object was not found.",
-                    String.format("Note with id = %s was not found", id));
-        }
-        return noteOptional.get();
+        var note = notePersistService.getNote(id).orElseThrow(() ->
+                new NotFoundException("The required object was not found.",
+                        String.format("Note with id = %s was not found", id)));
+
+        return note;
     }
 }
