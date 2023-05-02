@@ -7,11 +7,12 @@ import java.util.Optional;
 
 public interface NotePersistService {
 
-    Optional<Note> getNoteById(Long id);
+    Optional<Note> getNote(Long id);
 
     Note createNote(Note note);
 
     Note updateNote(Note note);
 
     void deleteNote(Long id);
+    boolean existNote(Long id);
 }

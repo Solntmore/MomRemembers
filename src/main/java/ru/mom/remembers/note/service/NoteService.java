@@ -6,7 +6,7 @@ import ru.mom.remembers.note.dto.UpdateRequestNoteDto;
 
 public interface NoteService {
 
-    FullResponseNoteDto getFullNoteById(Long id);
+    FullResponseNoteDto getNote(Long id);
 
     FullResponseNoteDto createNote(NewRequestNoteDto newNoteDto);
 

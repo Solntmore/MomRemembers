@@ -9,14 +9,13 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class NotePersistServiceImpl implements NotePersistService {
 
     private final NoteRepository noteRepository;
 
     @Override
-    public Optional<Note> getNoteById(Long id) {
+    public Optional<Note> getNote(Long id) {
         return noteRepository.findById(id);
     }
 
@@ -35,6 +34,11 @@ public class NotePersistServiceImpl implements NotePersistService {
     @Override
     @Transactional
     public void deleteNote(Long id) {
+        noteRepository.deleteById(id);
+    }
 
+    @Override
+    public boolean existNote(Long id) {
+        return noteRepository.existsById(id);
     }
 }

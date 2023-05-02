@@ -20,15 +20,15 @@ public class NoteServiceImpl implements NoteService {
     private final NoteMapper noteMapper;
 
     @Override
-    public FullResponseNoteDto getFullNoteById(Long id) {
+    public FullResponseNoteDto getNote(Long id) {
 
-        var noteOpt = notePersistService.getNoteById(id);
-        if (noteOpt.isEmpty()) {
+        var noteOptional = notePersistService.getNote(id);
+        if (noteOptional.isEmpty()) {
             throw new NotFoundException("The required object was not found.",
                     String.format("Note with id = %s was not found", id));
         }
 
-        return noteMapper.toFullNote(noteOpt.get());
+        return noteMapper.toFullNote(noteOptional.get());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public FullResponseNoteDto updateNote(UpdateRequestNoteDto updateNoteDto, Long id) {
 
-        if (updateNoteDto.getId().equals(id)) {
+        if (!updateNoteDto.getId().equals(id)) {
             throw new BadRequestException("Bad request body", "Id of note is mistake.");
         }
 
@@ -63,7 +63,7 @@ public class NoteServiceImpl implements NoteService {
             throw new BadRequestException("Bad request body", "Note location is empty");
         }
 
-        var note = getNote(id);
+        var note = findNote(id);
 
         noteMapper.mergeToNote(updateNoteDto, note);
 
@@ -73,20 +73,20 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public void deleteNote(Long id) {
 
-        var noteFull = getNote(id);
-
-        notePersistService.deleteNote(noteFull.getId());
-
-    }
-
-    private Note getNote(Long id) {
-
-        var noteOpt = notePersistService.getNoteById(id);
-        if (noteOpt.isEmpty()) {
+        if (!notePersistService.existNote(id)) {
             throw new NotFoundException("The required object was not found.",
                     String.format("Note with id = %s was not found", id));
         }
+        notePersistService.deleteNote(id);
+    }
 
-        return noteOpt.get();
+    private Note findNote(Long id) {
+
+        var noteOptional = notePersistService.getNote(id);
+        if (noteOptional.isEmpty()) {
+            throw new NotFoundException("The required object was not found.",
+                    String.format("Note with id = %s was not found", id));
+        }
+        return noteOptional.get();
     }
 }
