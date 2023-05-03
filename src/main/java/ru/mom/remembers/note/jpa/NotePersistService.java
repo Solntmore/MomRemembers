@@ -1,12 +1,10 @@
 package ru.mom.remembers.note.jpa;
 
-
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.mom.remembers.note.model.Note;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface NotePersistService {
@@ -20,15 +18,5 @@ public interface NotePersistService {
     void deleteNote(Long id);
     boolean existNote(Long id);
 
-    Page<Note> getNotesByWords(String query, Pageable pageable);
-
-    Page<Note> getNotesByAlphabetAsc(Pageable pageable);
-
-    Page<Note> getNotesByAlphabetDesc(Pageable pageable);
-
-    Page<Note> getNotesByCreatedAsc(Pageable pageable);
-
-    Page<Note> getNotesByCreatedDesc(Pageable pageable);
-
-    Page<Note> getNotesBetweenDates(LocalDateTime rangeStart, LocalDateTime rangeEnd, PageRequest page);
+    Page<Note> findAll(BooleanBuilder parameters, Pageable pageable);
 }

@@ -2,7 +2,6 @@ package ru.mom.remembers.note.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,30 +53,18 @@ public class NoteController {
         noteService.deleteNote(id);
     }
 
-    @GetMapping(value = {"/search", ""})
+    @GetMapping
     public ResponseEntity<List<ShortResponseNoteDto>> getNotes(
-            @RequestParam(name = "text", required = false) String query,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "10") int size,
-            @RequestParam(required = false,
-                    defaultValue = "SORT_BY_ALPHABET_DESC") SortedKeys sort) {
+                                                @RequestParam (required = false) String rangeStart,
+                                                @RequestParam (required = false) String rangeEnd,
+                                                @RequestParam(name = "text", required = false) String query,
+                                                @RequestParam(required = false, defaultValue = "0") int from,
+                                                @RequestParam(required = false, defaultValue = "10") int size,
+                                                @RequestParam(required = false,
+                                                        defaultValue = "SORT_BY_ALPHABET_DESC") SortedKeys sort) {
         log.debug("Request to search notes.");
 
-        return ResponseEntity.status(HttpStatus.OK).body(noteService.getNotes(query, PageRequest.of(from, size), sort));
+        return ResponseEntity.status(HttpStatus.OK).body(noteService.getNotes(query, from, size, sort,
+                rangeStart, rangeEnd));
     }
-
-    @GetMapping("/calendarSearch")
-    public ResponseEntity<List<ShortResponseNoteDto>> getNotesBetweenDates(
-            @RequestParam String rangeStart,
-            @RequestParam String rangeEnd,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "10") int size) {
-        log.debug("Request to use calendar search for notes.");
-
-        return ResponseEntity.status(HttpStatus.OK).body(
-                noteService.getNotesBetweenDates(rangeStart, rangeEnd, PageRequest.of(from, size)));
-    }
-
-
-
 }

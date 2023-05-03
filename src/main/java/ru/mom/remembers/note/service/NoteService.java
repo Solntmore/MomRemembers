@@ -1,7 +1,5 @@
 package ru.mom.remembers.note.service;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import ru.mom.remembers.note.dto.FullResponseNoteDto;
 import ru.mom.remembers.note.dto.NewRequestNoteDto;
 import ru.mom.remembers.note.dto.ShortResponseNoteDto;
@@ -20,9 +18,8 @@ public interface NoteService {
 
     void deleteNote(Long id);
 
-    List<ShortResponseNoteDto> getNotes(String query, Pageable pageable, SortedKeys sort);
-
-    List<ShortResponseNoteDto> getNotesBetweenDates(String rangeStart, String rangeEnd, PageRequest page);
+    List<ShortResponseNoteDto> getNotes(String query, int from, int size, SortedKeys sort,
+                                        String rangeStart, String rangeEnd);
 
 }
 
