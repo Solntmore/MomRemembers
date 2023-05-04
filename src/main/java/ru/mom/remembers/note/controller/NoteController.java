@@ -61,7 +61,7 @@ public class NoteController {
                                                 @RequestParam(required = false, defaultValue = "0") int from,
                                                 @RequestParam(required = false, defaultValue = "10") int size,
                                                 @RequestParam(required = false,
-                                                        defaultValue = "SORT_BY_ALPHABET_DESC") SortedKeys sort) {
+                                                        defaultValue = "SORT_BY_DATE_DESC") SortedKeys sort) {
         log.debug("Request to search notes.");
 
         return ResponseEntity.status(HttpStatus.OK).body(noteService.getNotes(query, from, size, sort,
