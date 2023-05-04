@@ -1,6 +1,8 @@
 package ru.mom.remembers.note.jpa;
 
-
+import com.querydsl.core.BooleanBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.mom.remembers.note.model.Note;
 
 import java.util.Optional;
@@ -15,4 +17,6 @@ public interface NotePersistService {
 
     void deleteNote(Long id);
     boolean existNote(Long id);
+
+    Page<Note> findAll(BooleanBuilder parameters, Pageable pageable);
 }

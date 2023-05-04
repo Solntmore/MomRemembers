@@ -29,5 +29,5 @@ public class ShortResponseNoteDto {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime created;
+    private LocalDateTime lastUpdateDate;
 }

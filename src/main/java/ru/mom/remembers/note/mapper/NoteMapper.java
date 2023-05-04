@@ -6,6 +6,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.mom.remembers.note.dto.FullResponseNoteDto;
 import ru.mom.remembers.note.dto.NewRequestNoteDto;
+import ru.mom.remembers.note.dto.ShortResponseNoteDto;
 import ru.mom.remembers.note.dto.UpdateRequestNoteDto;
 import ru.mom.remembers.note.model.Note;
 
@@ -17,5 +18,8 @@ public interface NoteMapper {
 
     Note toNote(NewRequestNoteDto newNoteDto);
 
+    ShortResponseNoteDto toShortNote(Note note);
+
+    @Mapping(target = "lastUpdateDate", ignore = true)
     void mergeToNote(UpdateRequestNoteDto updateEventDto, @MappingTarget Note note);
 }

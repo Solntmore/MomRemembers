@@ -38,10 +38,11 @@ public class Note {
     private String season;
 
     @Column(name = "created")
-    private LocalDateTime created;
+    private LocalDateTime lastUpdateDate;
 
     @PrePersist
+    @PreUpdate
     protected void onCreate() {
-        created = LocalDateTime.now();
+        lastUpdateDate = LocalDateTime.now();
     }
 }

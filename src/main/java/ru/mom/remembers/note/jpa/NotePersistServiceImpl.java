@@ -1,6 +1,9 @@
 package ru.mom.remembers.note.jpa;
 
+import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.mom.remembers.note.model.Note;
 import ru.mom.remembers.note.repository.NoteRepository;
@@ -41,4 +44,10 @@ public class NotePersistServiceImpl implements NotePersistService {
     public boolean existNote(Long id) {
         return noteRepository.existsById(id);
     }
+
+    @Override
+    public Page<Note> findAll(BooleanBuilder parameters, Pageable pageable) {
+        return noteRepository.findAll(parameters, pageable);
+    }
+
 }

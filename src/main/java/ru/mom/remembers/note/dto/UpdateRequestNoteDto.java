@@ -34,10 +34,10 @@ public class UpdateRequestNoteDto {
     @Length(max = 200)
     private String season;
 
-    private LocalDateTime created;
+    private LocalDateTime lastUpdateDate;
 
     @PrePersist
     protected void onCreate() {
-        created = LocalDateTime.now();
+        lastUpdateDate = LocalDateTime.now();
     }
 }

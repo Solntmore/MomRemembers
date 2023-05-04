@@ -4,16 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.mom.remembers.note.dto.FullResponseNoteDto;
 import ru.mom.remembers.note.dto.NewRequestNoteDto;
+import ru.mom.remembers.note.dto.ShortResponseNoteDto;
 import ru.mom.remembers.note.dto.UpdateRequestNoteDto;
+import ru.mom.remembers.note.model.SortedKeys;
 import ru.mom.remembers.note.service.NoteService;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping(path = "/notes")
 public class NoteController {
@@ -35,7 +38,7 @@ public class NoteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FullResponseNoteDto> updateNote(@RequestBody UpdateRequestNoteDto updateNoteDto,
+    public ResponseEntity<FullResponseNoteDto> updateNote(@RequestBody @Valid UpdateRequestNoteDto updateNoteDto,
                                                           @PathVariable Long id) {
 
         log.info("Request to update a note.");
@@ -50,5 +53,18 @@ public class NoteController {
         noteService.deleteNote(id);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ShortResponseNoteDto>> getNotes(
+                                                @RequestParam (required = false) String rangeStart,
+                                                @RequestParam (required = false) String rangeEnd,
+                                                @RequestParam(name = "text", required = false) String query,
+                                                @RequestParam(required = false, defaultValue = "0") int from,
+                                                @RequestParam(required = false, defaultValue = "10") int size,
+                                                @RequestParam(required = false,
+                                                        defaultValue = "SORT_BY_DATE_DESC") SortedKeys sort) {
+        log.debug("Request to search notes.");
 
+        return ResponseEntity.status(HttpStatus.OK).body(noteService.getNotes(query, from, size, sort,
+                rangeStart, rangeEnd));
+    }
 }
