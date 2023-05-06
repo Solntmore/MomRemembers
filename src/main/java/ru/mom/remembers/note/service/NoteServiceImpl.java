@@ -3,6 +3,15 @@ package ru.mom.remembers.note.service;
 import com.querydsl.core.BooleanBuilder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,8 +34,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.mom.remembers.config.CacheName.NOTE_CACHE;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NoteServiceImpl implements NoteService {
 
     private final NotePersistService notePersistService;
@@ -36,6 +48,7 @@ public class NoteServiceImpl implements NoteService {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
+    @Cacheable(cacheNames = NOTE_CACHE)
     public FullResponseNoteDto getNote(Long id) {
 
         var note = notePersistService.getNote(id).orElseThrow(() ->
@@ -63,7 +76,9 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    @CacheEvict(cacheNames = NOTE_CACHE,  key = "#id")
     public FullResponseNoteDto updateNote(UpdateRequestNoteDto updateNoteDto, Long id) {
+
 
         if (!updateNoteDto.getId().equals(id)) {
             throw new BadRequestException("Bad request body", "Id of note is mistake.");
@@ -85,6 +100,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    @CacheEvict(cacheNames = NOTE_CACHE, key = "#id")
     public void deleteNote(Long id) {
 
         if (!notePersistService.existNote(id)) {
@@ -94,7 +110,9 @@ public class NoteServiceImpl implements NoteService {
         notePersistService.deleteNote(id);
     }
 
+    @Cacheable(cacheNames = NOTE_CACHE, key = "#id")
     private Note findNote(Long id) {
+
 
         return notePersistService.getNote(id).orElseThrow(() ->
                 new NotFoundException("The required object was not found.",
@@ -157,5 +175,6 @@ public class NoteServiceImpl implements NoteService {
 
         return NoteFilter.builder().text(text).start(start).end(end).build();
     }
+
 
 }

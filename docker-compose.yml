@@ -1,0 +1,38 @@
+version: '3.1'
+services:
+
+  mom-remembers-main:
+    build: .
+    image: dock-mom-remembers
+    container_name: mom-remembers
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mom-remembers-db
+      - cache
+    environment:
+      - SPRING_REDIS_HOST:cache
+      - SPRING_REDIS_PORT:6379
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://mom-remembers-db:5432/mom-remembers
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=admin
+
+  mom-remembers-db:
+    image: postgres:14-alpine
+    container_name: mom-remembers-db
+    ports:
+      - "6541:5432"
+    volumes:
+      - /var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=mom-remembers
+
+  cache:
+    image: "redis"
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL

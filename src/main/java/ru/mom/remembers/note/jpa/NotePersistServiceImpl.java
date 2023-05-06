@@ -2,6 +2,7 @@ package ru.mom.remembers.note.jpa;
 
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class NotePersistServiceImpl implements NotePersistService {
 
@@ -19,24 +21,29 @@ public class NotePersistServiceImpl implements NotePersistService {
 
     @Override
     public Optional<Note> getNote(Long id) {
+        log.info("getting note by id: {}", id);
         return noteRepository.findById(id);
     }
 
     @Override
     @Transactional
     public Note createNote(Note note) {
+        log.info("creating note {}", note);
         return noteRepository.save(note);
     }
 
     @Override
     @Transactional
     public Note updateNote(Note note) {
+        log.info("updating note: {}", note);
         return noteRepository.save(note);
     }
 
     @Override
     @Transactional
+
     public void deleteNote(Long id) {
+        log.info("deleting note by id: {}", id);
         noteRepository.deleteById(id);
     }
 
@@ -51,3 +58,4 @@ public class NotePersistServiceImpl implements NotePersistService {
     }
 
 }
+
