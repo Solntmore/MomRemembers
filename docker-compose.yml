@@ -6,7 +6,7 @@ services:
     image: mom-remembers-main
     container_name: mom-remembers-main
     ports:
-      - "9090:9090"
+      - "8080:8080"
     depends_on:
       - mom-remembers-db
       - redis
@@ -21,7 +21,7 @@ services:
 
   mom-remembers-db:
     image: postgres:14-alpine
-    container_name: mom-remembers
+    container_name: mom-remembers-db
     ports:
       - "6541:5432"
     volumes:
@@ -30,7 +30,7 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=mom-remembers
-      - DB_HOST=localhost
+      - DB_HOST=mom-remembers-db
       - DB_PORT=5432
 
   redis:
