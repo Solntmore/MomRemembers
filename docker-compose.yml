@@ -3,23 +3,25 @@ services:
 
   mom-remembers-main:
     build: .
-    image: dock-mom-remembers
-    container_name: mom-remembers
+    image: mom-remembers-main
+    container_name: mom-remembers-main
     ports:
-      - "8080:8080"
+      - "9090:9090"
     depends_on:
       - mom-remembers-db
-      - cache
+      - redis
     environment:
-      - SPRING_REDIS_HOST:cache
-      - SPRING_REDIS_PORT:6379
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://mom-remembers-db:5432/mom-remembers
+      - DB_NAME=mom-remembers
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=admin
+      - POSTGRES_USER=admin
+      - DB_HOST=mom-remembers-db
+      - DB_PORT=5432
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
 
   mom-remembers-db:
     image: postgres:14-alpine
-    container_name: mom-remembers-db
+    container_name: mom-remembers
     ports:
       - "6541:5432"
     volumes:
@@ -28,9 +30,12 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=mom-remembers
+      - DB_HOST=localhost
+      - DB_PORT=5432
 
-  cache:
+  redis:
     image: "redis"
+    container_name: redis
     ports:
       - "6379:6379"
     environment:
