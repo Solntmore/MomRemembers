@@ -16,6 +16,7 @@ public interface NotePersistService {
     Note updateNote(Note note);
 
     void deleteNote(Long id);
+
     boolean existNote(Long id);
 
     Page<Note> findAll(BooleanBuilder parameters, Pageable pageable);

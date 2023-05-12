@@ -37,7 +37,7 @@ public class Note {
     @Column(name = "season", length = 200)
     private String season;
 
-    @Column(name = "created")
+    @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
     @PrePersist
