@@ -2,7 +2,7 @@ version: '3.1'
 services:
 
   mom-remembers-main:
-    build: .
+    build: ./main-server
     image: mom-remembers-main
     container_name: mom-remembers-main
     ports:
@@ -41,3 +41,29 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+
+  auth:
+    build: ./auth-server
+    container_name: auth
+    depends_on:
+      - auth-db
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_NAME=authDB
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - DB_HOST=auth-db
+      - DB_PORT=5432
+
+  auth-db:
+    image: postgres:14-alpine
+    container_name: authDB
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=authDB
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - DB_HOST=auth-db
+      - DB_PORT=5432
