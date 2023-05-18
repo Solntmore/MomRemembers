@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface NotePersistService {
 
-    Optional<Note> getNote(Long id);
+    Optional<Note> getNote(Long id, String userLogin);
 
     Note createNote(Note note);
 

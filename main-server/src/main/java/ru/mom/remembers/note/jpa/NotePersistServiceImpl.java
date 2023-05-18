@@ -20,9 +20,9 @@ public class NotePersistServiceImpl implements NotePersistService {
     private final NoteRepository noteRepository;
 
     @Override
-    public Optional<Note> getNote(Long id) {
+    public Optional<Note> getNote(Long id, String userLogin) {
         log.info("getting note by id: {}", id);
-        return noteRepository.findById(id);
+        return noteRepository.findByIdAndUserLogin(id, userLogin);
     }
 
     @Override

@@ -36,6 +36,8 @@ public class UpdateRequestNoteDto {
 
     private LocalDateTime lastUpdateDate;
 
+    private String userLogin;
+
     @PrePersist
     protected void onCreate() {
         lastUpdateDate = LocalDateTime.now();

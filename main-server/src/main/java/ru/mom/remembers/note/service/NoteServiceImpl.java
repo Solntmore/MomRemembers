@@ -44,17 +44,17 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     @Cacheable(NOTE_CACHE)
-    public FullResponseNoteDto getNote(Long id) {
+    public FullResponseNoteDto getNote(Long id, String userLogin) {
 
-        var note = notePersistService.getNote(id).orElseThrow(() ->
+        var note = notePersistService.getNote(id, userLogin).orElseThrow(() ->
                 new NotFoundException("The required object was not found.",
-                        String.format("Note with id = %s was not found", id)));
+                        String.format("Note with id = %s and userLogin = %s was not found.", id, userLogin)));
 
-        return noteMapper.toFullNote(note);
+        return noteMapper.toFullNote(note, userLogin);
     }
 
     @Override
-    public FullResponseNoteDto createNote(NewRequestNoteDto newNoteDto) {
+    public FullResponseNoteDto createNote(NewRequestNoteDto newNoteDto, String userLogin) {
 
         if (newNoteDto.getName() == null) {
             throw new BadRequestException("Bad request body", "Note name is empty");
@@ -64,7 +64,7 @@ public class NoteServiceImpl implements NoteService {
             throw new BadRequestException("Bad request body", "Note location is empty");
         }
 
-        Note note = notePersistService.createNote(noteMapper.toNote(newNoteDto));
+        Note note = notePersistService.createNote(noteMapper.toNote(newNoteDto, userLogin));
 
         return noteMapper.toFullNote(note);
 
@@ -72,7 +72,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     @CachePut(cacheNames = NOTE_CACHE, key = "#id")
-    public FullResponseNoteDto updateNote(UpdateRequestNoteDto updateNoteDto, Long id) {
+    public FullResponseNoteDto updateNote(UpdateRequestNoteDto updateNoteDto, Long id, String userLogin) {
 
         if (!updateNoteDto.getId().equals(id)) {
             throw new BadRequestException("Bad request body", "Id of note is mistake.");
@@ -86,36 +86,34 @@ public class NoteServiceImpl implements NoteService {
             throw new BadRequestException("Bad request body", "Note location is empty");
         }
 
-        var note = findNote(id);
+        var note = findNote(id, userLogin);
 
         noteMapper.mergeToNote(updateNoteDto, note);
 
-        return noteMapper.toFullNote(notePersistService.updateNote(note));
+        return noteMapper.toFullNote(notePersistService.updateNote(note), userLogin);
     }
 
     @Override
     @CacheEvict(cacheNames = NOTE_CACHE, key = "#id")
-    public void deleteNote(Long id) {
+    public void deleteNote(Long id, String userLogin) {
 
-        if (!notePersistService.existNote(id)) {
-            throw new NotFoundException("The required object was not found.",
-                    String.format("Note with id = %s was not found", id));
-        }
+        findNote(id, userLogin);
+
         notePersistService.deleteNote(id);
     }
 
-    private Note findNote(Long id) {
+    private Note findNote(Long id, String userLogin) {
 
-        return notePersistService.getNote(id).orElseThrow(() ->
+        return notePersistService.getNote(id, userLogin).orElseThrow(() ->
                 new NotFoundException("The required object was not found.",
-                        String.format("Note with id = %s was not found", id)));
+                        String.format("Note with id = %s and userLogin = %s was not found.", id, userLogin)));
     }
 
     @Override
-    public List<ShortResponseNoteDto> getNotes(String text, int from, int size, SortedKeys sort, String start,
-                                               String end) {
+    public List<ShortResponseNoteDto> getNotes(String userLogin, String text, int from, int size,
+                                               SortedKeys sort, String start, String end) {
 
-        NoteFilter filter = makeFilter(text, start, end);
+        NoteFilter filter = makeFilter(userLogin, text, start, end);
         BooleanBuilder parameters = makeBooleanBuilder(filter);
         Pageable pageParameters;
 
@@ -133,6 +131,7 @@ public class NoteServiceImpl implements NoteService {
 
         List<Note> notes = notePersistService.findAll(parameters, pageParameters).getContent();
 
+
         return notes
                 .stream()
                 .map(noteMapper::toShortNote)
@@ -149,11 +148,12 @@ public class NoteServiceImpl implements NoteService {
 
         builder.and(QNote.note.lastUpdateDate.after(filter.getStart()));
         builder.and(QNote.note.lastUpdateDate.before(filter.getEnd()));
+        builder.and(QNote.note.userLogin.eq(filter.getUserLogin()));
 
         return builder;
     }
 
-    private NoteFilter makeFilter(String text, String rangeStart, String rangeEnd) {
+    private NoteFilter makeFilter(String userLogin, String text, String rangeStart, String rangeEnd) {
         LocalDateTime start;
         LocalDateTime end;
 
@@ -165,7 +165,7 @@ public class NoteServiceImpl implements NoteService {
             end = LocalDateTime.parse(rangeEnd, formatter);
         }
 
-        return NoteFilter.builder().text(text).start(start).end(end).build();
+        return NoteFilter.builder().text(text).start(start).end(end).userLogin(userLogin).build();
     }
 
 

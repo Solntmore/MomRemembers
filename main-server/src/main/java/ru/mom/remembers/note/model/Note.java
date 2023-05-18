@@ -40,6 +40,10 @@ public class Note {
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
+    @Length(min = 1, max = 50)
+    @Column(name = "user_login", nullable = false)
+    private String userLogin;
+
     @PrePersist
     @PreUpdate
     protected void onCreate() {

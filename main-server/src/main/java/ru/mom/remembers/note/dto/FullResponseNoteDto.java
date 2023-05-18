@@ -35,4 +35,6 @@ public class FullResponseNoteDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastUpdateDate;
 
+    private String userLogin;
+
 }

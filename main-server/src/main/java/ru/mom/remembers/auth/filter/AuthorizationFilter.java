@@ -12,11 +12,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 @Component
 @RequiredArgsConstructor
 public class AuthorizationFilter extends OncePerRequestFilter {
 
+    public static final String USER_LOGIN = "user_login";
     private final TokenCheckService tokenCheckService;
 
     @Value("${auth.enabled}")
@@ -27,23 +27,26 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (!enabled)
+        if (!enabled) {
             filterChain.doFilter(request, response);
-
+        }
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (authHeader == null || authHeader.isBlank())
+        if (authHeader == null || authHeader.isBlank()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        else if (!checkAuthorization(authHeader))
+        } else if (!checkAuthorization(authHeader)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        else
-            filterChain.doFilter(request, response);
+        } else {
+            HeaderMapRequestWrapper requestWrapper = new HeaderMapRequestWrapper(request);
+            requestWrapper.addHeader(USER_LOGIN, tokenCheckService.getSubject(authHeader.substring(7)));
+            filterChain.doFilter(requestWrapper, response);
+        }
     }
 
     private boolean checkAuthorization(String auth) {
-        if (!auth.startsWith("Bearer "))
+        if (!auth.startsWith("Bearer ")) {
             return false;
-
+        }
         String token = auth.substring(7);
         return tokenCheckService.checkToken(token);
     }
