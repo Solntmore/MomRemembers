@@ -15,6 +15,8 @@ import ru.mom.remembers.note.service.NoteService;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.mom.remembers.auth.filter.AuthorizationFilter.USER_LOGIN;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -24,37 +26,42 @@ public class NoteController {
     private final NoteService noteService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<FullResponseNoteDto> getNote(@PathVariable Long id) {
+    public ResponseEntity<FullResponseNoteDto> getNote(@RequestHeader(USER_LOGIN) String userLogin,
+                                                       @PathVariable Long id) {
 
         log.info("Get a note by id = " + id);
-        return ResponseEntity.status(HttpStatus.OK).body(noteService.getNote(id));
+        return ResponseEntity.status(HttpStatus.OK).body(noteService.getNote(id, userLogin));
     }
 
     @PostMapping()
-    public ResponseEntity<FullResponseNoteDto> createNote(@RequestBody NewRequestNoteDto newNoteDto) {
+    public ResponseEntity<FullResponseNoteDto> createNote(@RequestHeader(USER_LOGIN) String userLogin,
+                                                          @RequestBody NewRequestNoteDto newNoteDto) {
 
         log.info("Request to create a note.");
-        return ResponseEntity.status(HttpStatus.CREATED).body(noteService.createNote(newNoteDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(noteService.createNote(newNoteDto, userLogin));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FullResponseNoteDto> updateNote(@RequestBody @Valid UpdateRequestNoteDto updateNoteDto,
+    public ResponseEntity<FullResponseNoteDto> updateNote(@RequestHeader(USER_LOGIN) String userLogin,
+                                                          @RequestBody @Valid UpdateRequestNoteDto updateNoteDto,
                                                           @PathVariable Long id) {
 
         log.info("Request to update a note.");
-        return ResponseEntity.status(HttpStatus.OK).body(noteService.updateNote(updateNoteDto, id));
+        return ResponseEntity.status(HttpStatus.OK).body(noteService.updateNote(updateNoteDto, id, userLogin));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteNote(@PathVariable Long id) {
+    public void deleteNote(@RequestHeader(USER_LOGIN) String userLogin,
+                           @PathVariable Long id) {
 
         log.info("Request to delete a note.");
-        noteService.deleteNote(id);
+        noteService.deleteNote(id, userLogin);
     }
 
     @GetMapping
     public ResponseEntity<List<ShortResponseNoteDto>> getNotes(
+                                                @RequestHeader(USER_LOGIN) String userLogin,
                                                 @RequestParam (required = false) String rangeStart,
                                                 @RequestParam (required = false) String rangeEnd,
                                                 @RequestParam(name = "text", required = false) String query,
@@ -64,7 +71,7 @@ public class NoteController {
                                                         defaultValue = "SORT_BY_DATE_DESC") SortedKeys sort) {
         log.debug("Request to search notes.");
 
-        return ResponseEntity.status(HttpStatus.OK).body(noteService.getNotes(query, from, size, sort,
+        return ResponseEntity.status(HttpStatus.OK).body(noteService.getNotes(userLogin, query, from, size, sort,
                 rangeStart, rangeEnd));
     }
 }

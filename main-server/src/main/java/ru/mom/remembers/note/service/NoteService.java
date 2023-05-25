@@ -10,15 +10,15 @@ import java.util.List;
 
 public interface NoteService {
 
-    FullResponseNoteDto getNote(Long id);
+    FullResponseNoteDto getNote(Long id, String userLogin);
 
-    FullResponseNoteDto createNote(NewRequestNoteDto newNoteDto);
+    FullResponseNoteDto createNote(NewRequestNoteDto newNoteDto, String userLogin);
 
-    FullResponseNoteDto updateNote(UpdateRequestNoteDto updateNoteDto, Long id);
+    FullResponseNoteDto updateNote(UpdateRequestNoteDto updateNoteDto, Long id, String userLogin);
 
-    void deleteNote(Long id);
+    void deleteNote(Long id, String userLogin);
 
-    List<ShortResponseNoteDto> getNotes(String query, int from, int size, SortedKeys sort,
+    List<ShortResponseNoteDto> getNotes(String userLogin, String query, int from, int size, SortedKeys sort,
                                         String rangeStart, String rangeEnd);
 
 }

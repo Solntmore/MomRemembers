@@ -14,9 +14,14 @@ import ru.mom.remembers.note.model.Note;
 public interface NoteMapper {
 
     @Mapping(target = "id", source = "note.id")
+    @Mapping(target = "userLogin", source = "userLogin")
+    FullResponseNoteDto toFullNote(Note note, String userLogin);
+
+    @Mapping(target = "id", source = "note.id")
     FullResponseNoteDto toFullNote(Note note);
 
-    Note toNote(NewRequestNoteDto newNoteDto);
+    @Mapping(target = "userLogin", source = "userLogin")
+    Note toNote(NewRequestNoteDto newNoteDto, String userLogin);
 
     ShortResponseNoteDto toShortNote(Note note);
 

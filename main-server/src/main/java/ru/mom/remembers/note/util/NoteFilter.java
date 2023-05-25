@@ -18,4 +18,6 @@ public class NoteFilter {
     private LocalDateTime end;
 
     private String text;
+
+    private String userLogin;
 }

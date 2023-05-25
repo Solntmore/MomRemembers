@@ -38,4 +38,9 @@ public class DefaultTokenCheckService implements TokenCheckService {
 
         return true;
     }
+
+    @Override
+    public String getSubject(String token) {
+        return JWT.decode(token).getSubject();
+    }
 }
