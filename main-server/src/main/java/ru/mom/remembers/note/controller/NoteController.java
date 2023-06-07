@@ -61,14 +61,14 @@ public class NoteController {
 
     @GetMapping
     public ResponseEntity<List<ShortResponseNoteDto>> getNotes(
-                                                @RequestHeader(USER_LOGIN) String userLogin,
-                                                @RequestParam (required = false) String rangeStart,
-                                                @RequestParam (required = false) String rangeEnd,
-                                                @RequestParam(name = "text", required = false) String query,
-                                                @RequestParam(required = false, defaultValue = "0") int from,
-                                                @RequestParam(required = false, defaultValue = "10") int size,
-                                                @RequestParam(required = false,
-                                                        defaultValue = "SORT_BY_DATE_DESC") SortedKeys sort) {
+            @RequestHeader(USER_LOGIN) String userLogin,
+            @RequestParam(required = false) String rangeStart,
+            @RequestParam(required = false) String rangeEnd,
+            @RequestParam(name = "text", required = false) String query,
+            @RequestParam(required = false, defaultValue = "0") int from,
+            @RequestParam(required = false, defaultValue = "10") int size,
+            @RequestParam(required = false,
+                    defaultValue = "SORT_BY_DATE_DESC") SortedKeys sort) {
         log.debug("Request to search notes.");
 
         return ResponseEntity.status(HttpStatus.OK).body(noteService.getNotes(userLogin, query, from, size, sort,

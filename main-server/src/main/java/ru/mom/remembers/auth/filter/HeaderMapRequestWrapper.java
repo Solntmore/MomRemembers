@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.*;
 
-public class HeaderMapRequestWrapper  extends HttpServletRequestWrapper {
+public class HeaderMapRequestWrapper extends HttpServletRequestWrapper {
 
     public HeaderMapRequestWrapper(HttpServletRequest request) {
         super(request);

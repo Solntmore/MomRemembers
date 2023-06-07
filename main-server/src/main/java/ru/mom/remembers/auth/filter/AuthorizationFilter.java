@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 @Component
 @RequiredArgsConstructor
 public class AuthorizationFilter extends OncePerRequestFilter {
@@ -27,8 +28,10 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (!enabled) {
+        if (!enabled || request.getRequestURI().contains("swagger") ||
+                request.getRequestURI().contains("/v3/api-docs")) {
             filterChain.doFilter(request, response);
+            return;
         }
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 

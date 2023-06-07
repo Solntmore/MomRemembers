@@ -1,6 +1,7 @@
 package ru.mom.remembers.attachment.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -19,16 +20,21 @@ public class Attachment {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "note_id")
+    private Long noteId;
+
     @Lob
-    @Column(name = "data", columnDefinition="BLOB")
+    @Column(name = "data")                        // for Postgres
+//    @Column(name = "data", columnDefinition = "BLOB") // for H2
     private byte[] data;
 
     public Attachment() {
     }
 
-    public Attachment(String name, String type, byte[] data) {
+    public Attachment(String name, String type, Long noteId, byte[] data) {
         this.name = name;
         this.type = type;
+        this.noteId = noteId;
         this.data = data;
     }
 

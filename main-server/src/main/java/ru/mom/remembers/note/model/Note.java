@@ -5,9 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import ru.mom.remembers.attachment.model.Attachment;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Data
@@ -43,6 +45,9 @@ public class Note {
     @Length(min = 1, max = 50)
     @Column(name = "user_login", nullable = false)
     private String userLogin;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "noteId")
+    private List<Attachment> attachments;
 
     @PrePersist
     @PreUpdate

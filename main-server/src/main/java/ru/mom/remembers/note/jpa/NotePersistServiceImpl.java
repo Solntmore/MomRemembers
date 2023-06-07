@@ -41,7 +41,6 @@ public class NotePersistServiceImpl implements NotePersistService {
 
     @Override
     @Transactional
-
     public void deleteNote(Long id) {
         log.info("deleting note by id: {}", id);
         noteRepository.deleteById(id);

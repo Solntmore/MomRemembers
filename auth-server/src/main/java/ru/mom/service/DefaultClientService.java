@@ -17,7 +17,7 @@ public class DefaultClientService implements ClientService {
 
     @Override
     public void register(String clientId, String clientSecret) {
-        if(userRepository.findById(clientId).isPresent())
+        if (userRepository.findById(clientId).isPresent())
             throw new RegistrationException("Client with id: " + clientId + " already registered");
 
         String hash = BCrypt.hashpw(clientSecret, BCrypt.gensalt());
@@ -26,6 +26,7 @@ public class DefaultClientService implements ClientService {
 
     @Override
     public void checkCredentials(String clientId, String clientSecret) {
+
         Optional<ClientEntity> optionalUserEntity = userRepository.findById(clientId);
         if (optionalUserEntity.isEmpty())
             throw new LoginException("Client with id: " + clientId + " not found");
