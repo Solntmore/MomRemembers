@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import ru.mom.remembers.attachment.model.Attachment;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -43,6 +44,9 @@ public class Note {
     @Length(min = 1, max = 50)
     @Column(name = "user_login", nullable = false)
     private String userLogin;
+
+    @OneToOne
+    private Attachment attachments;
 
     @PrePersist
     @PreUpdate
