@@ -9,7 +9,6 @@ import ru.mom.remembers.attachment.model.Attachment;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 @Data
@@ -46,8 +45,8 @@ public class Note {
     @Column(name = "user_login", nullable = false)
     private String userLogin;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "noteId")
-    private List<Attachment> attachments;
+    @OneToOne
+    private Attachment attachments;
 
     @PrePersist
     @PreUpdate

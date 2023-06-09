@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.mom.remembers.attachment.message.ResponseAttach;
 import ru.mom.remembers.attachment.model.Attachment;
 import ru.mom.remembers.attachment.service.AttachmentService;
 
@@ -26,17 +27,18 @@ public class AttachmentController {
 
     @PostMapping(path = "/{noteId}", headers = "Content-Type= multipart/form-data")
     @Operation(summary = "Загружает вложение",
-            description = "Позволяет загрузить изображение к определенной записи и сохранить его в БД")
-    public ResponseEntity<Attachment> upload(@RequestParam("attachment") MultipartFile file,
-                                             @PathVariable("noteId") Long noteId) throws IOException {
+               description = "Позволяет загрузить изображение к определенной записи и сохранить его в БД")
+    public ResponseEntity<ResponseAttach> upload(@RequestParam("attachment") MultipartFile file,
+                                                 @PathVariable("noteId") Long noteId) throws IOException {
 
         return ResponseEntity.status(HttpStatus.OK).body(attachmentService.store(file, noteId));
     }
 
 
+
     @GetMapping("/{noteId}")
     @Operation(summary = "Получает вложения",
-            description = "Позволяет получить изображение к определенной записи")
+               description = "Позволяет получить изображение к определенной записи")
     public ResponseEntity<byte[]> getAttachment(@PathVariable Long noteId) {
 
         Attachment attach = attachmentService.getAttach(noteId);

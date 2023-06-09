@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.mom.remembers.attachment.jpa.AttachmentPersistService;
+import ru.mom.remembers.attachment.message.ResponseAttach;
 import ru.mom.remembers.attachment.model.Attachment;
 import ru.mom.remembers.exception.BadRequestException;
 import ru.mom.remembers.exception.NotFoundException;
@@ -17,7 +19,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     private final AttachmentPersistService attachmentPersistService;
 
-    public Attachment store(MultipartFile file, Long noteId) throws IOException {
+    public ResponseAttach store(MultipartFile file, Long noteId) throws IOException {
 
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -25,10 +27,24 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         if (fileDB.isEmpty() || !fileName.equals(fileDB.get().getName())) {
             Attachment attachment = new Attachment(fileName, file.getContentType(), noteId, file.getBytes());
-            return attachmentPersistService.store(attachment);
+            var attach = attachmentPersistService.store(attachment);
+
+            String fileDownloadUri = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/files/")
+                    .path(attach.getId().toString())
+                    .toUriString();
+
+            return new ResponseAttach(
+                    attach.getName(),
+                    fileDownloadUri,
+                    attach.getType(),
+                    attach.getNoteId(),
+                    attach.getData().length);
         }
         throw new BadRequestException("Bad request body", "Attachment with this name already exists");
     }
+
 
     @Override
     public Attachment getAttach(Long noteId) {
