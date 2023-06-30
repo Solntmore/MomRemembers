@@ -27,9 +27,9 @@ services:
     volumes:
       - /var/lib/postgresql/data/
     environment:
+      - POSTGRES_DB=mom-remembers
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=mom-remembers
       - DB_HOST=mom-remembers-db
       - DB_PORT=5432
 
@@ -51,19 +51,19 @@ services:
       - "8081:8081"
     environment:
       - DB_NAME=authDB
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
       - DB_HOST=auth-db
       - DB_PORT=5432
 
   auth-db:
     image: postgres:14-alpine
-    container_name: authDB
+    container_name: auth-db
     ports:
       - "6542:5432"
     environment:
       - POSTGRES_DB=authDB
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
       - DB_HOST=auth-db
       - DB_PORT=5432

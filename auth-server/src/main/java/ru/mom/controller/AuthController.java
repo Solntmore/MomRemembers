@@ -1,40 +1,63 @@
 package ru.mom.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ru.mom.dto.ErrorResponse;
-import ru.mom.dto.TokenResponse;
-import ru.mom.dto.User;
-import ru.mom.exception.LoginException;
-import ru.mom.exception.RegistrationException;
-import ru.mom.service.ClientService;
-import ru.mom.service.TokenGenerateService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.mom.dto.NewUserDto;
+import ru.mom.model.JwtRequest;
+import ru.mom.model.JwtResponse;
+import ru.mom.model.RefreshJwtRequest;
+import ru.mom.service.AuthService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth-controller", description = "Управляет регистраций и авторизацией пользователей")
 public class AuthController {
 
-    private final ClientService clientService;
-    private final TokenGenerateService tokenGenerateService;
+    private final AuthService authService;
 
-    @PostMapping
-    public ResponseEntity<String> register(@RequestBody User user) {
-        clientService.register(user.getClientId(), user.getClientSecret());
-        return ResponseEntity.ok("Registered");
+    @PostMapping("/register")
+    @Operation(summary = "Регистрация нового пользователя",
+            description = "Позволяет зарегистрировать пользователя, сохранить в БД")
+    public ResponseEntity<String> register(@RequestBody @Valid NewUserDto newUserDto) {
+
+        authService.register(newUserDto);
+        return ResponseEntity.ok("Регистрация прошла успешно");
     }
 
-    @PostMapping("/token")
-    public TokenResponse getToken(@RequestBody User user) {
-        clientService.checkCredentials(user.getClientId(), user.getClientSecret());
-        return new TokenResponse(tokenGenerateService.generateToken(user.getClientId()));
+    @PostMapping("/login")
+    @Operation(summary = "Авторизация пользователя",
+            description = "Позволяет авторизовать пользователю")
+    public ResponseEntity<JwtResponse> login(@RequestBody @Valid JwtRequest authRequest) {
+
+        JwtResponse token = authService.login(authRequest);
+        return ResponseEntity.ok(token);
     }
 
-    @ExceptionHandler({RegistrationException.class, LoginException.class})
-    public ResponseEntity<ErrorResponse> handleUserRegistrationException(RuntimeException ex) {
-        return ResponseEntity
-                .badRequest()
-                .body(new ErrorResponse(ex.getMessage()));
+    @PostMapping("token")
+    @Operation(summary = "Обновление access токена",
+            description = "Позволяет получить новый access токен")
+    public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) {
+
+        JwtResponse token = authService.getAccessToken(request.getRefreshToken());
+        return ResponseEntity.ok(token);
     }
+
+    @PostMapping("refresh")
+    @Operation(summary = "Обновление access и refresh токенов",
+            description = "Позволяет получить новые access и refresh токены")
+    public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
+
+        JwtResponse token = authService.refresh(request.getRefreshToken());
+        return ResponseEntity.ok(token);
+    }
+
 }
