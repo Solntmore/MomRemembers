@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import ru.mom.dto.AuthUserDto;
 import ru.mom.dto.NewUserDto;
 import ru.mom.exception.AuthException;
-import ru.mom.exception.NotFoundException;
 import ru.mom.exception.RegistrationException;
 import ru.mom.jpa.UserPersistService;
 import ru.mom.mapper.UserMapper;
@@ -39,24 +38,19 @@ public class AuthServiceImpl implements AuthService {
 
         var user = userPersistService.findUser(newUserDto.getLogin());
 
-        if (user.isEmpty()) {
+        if (!user.isEmpty()) {
+
+            if (user != null && user.get().getLogin().equals(newUserDto.getLogin())) {
+                throw new RegistrationException("Ошибка регистрации", "Пользователь с таким логином уже существует.");
+            }
+
+        } else {
 
             String hash = BCrypt.hashpw(newUserDto.getPassword(), BCrypt.gensalt());
 
             userPersistService.register(
                     new User(newUserDto.getLogin(), hash, newUserDto.getUsername(), newUserDto.getEmail()));
-            return;
         }
-
-        if (user != null && user.get().getLogin().equals(newUserDto.getLogin())) {
-            throw new RegistrationException("Пользователь с таким логином уже существует.");
-        }
-
-        if (user != null && user.get().getEmail().equals(newUserDto.getEmail())) {
-            throw new RegistrationException("Пользователь с таким email уже существует.");
-        }
-
-
     }
 
     @Override
@@ -65,11 +59,11 @@ public class AuthServiceImpl implements AuthService {
         var user = userPersistService.findUser(authRequest.getLogin());
 
         if (user.isEmpty()) {
-            throw new NotFoundException("The required object was not found.",
-                    String.format("User was not found", authRequest.getUsername()));
+            throw new AuthException("Ошибка авторизации",
+                    String.format("Пользователь с таким логином не существует", authRequest.getLogin()));
         }
 
-       var userAuth = userMapper.toAuthUserDto(user.get());
+        var userAuth = userMapper.toAuthUserDto(user.get());
 
         if (BCrypt.checkpw(authRequest.getPassword(), userAuth.getHash())) {
             String accessToken = jwtProvider.generateAccessToken(userAuth);
@@ -77,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
             refreshStorage.put(userAuth.getLogin(), refreshToken);
             return new JwtResponse(accessToken, refreshToken);
         } else {
-            throw new AuthException("Неправильный пароль");
+            throw new AuthException("Ошибка авторизации", "Неправильный пароль");
         }
     }
 
@@ -118,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
                 return new JwtResponse(accessToken, newRefreshToken);
             }
         }
-        throw new AuthException("Невалидный JWT токен");
+        throw new AuthException("Ошибка авторизации", "Невалидный JWT токен");
     }
 
     @Override

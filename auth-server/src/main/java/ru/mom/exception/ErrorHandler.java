@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.security.auth.login.LoginException;
 
-@RestControllerAdvice("ru.effective.mobile.social")
+@RestControllerAdvice("ru.mom")
 @Slf4j
 public class ErrorHandler {
 
@@ -27,10 +27,17 @@ public class ErrorHandler {
         return new ApiError(HttpStatus.BAD_REQUEST, e.getReason(), e.getMessage());
     }
 
-    @ExceptionHandler({RegistrationException.class, LoginException.class})
-    public ResponseEntity<ErrorResponse> handleUserRegistrationException(RuntimeException ex) {
-        return ResponseEntity
-                .badRequest()
-                .body(new ErrorResponse(ex.getMessage()));
+    @ExceptionHandler({RegistrationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleUserRegistrationException(final RegistrationException e) {
+        log.info(e.getMessage(), e);
+        return new ApiError(HttpStatus.BAD_REQUEST, e.getReason(), e.getMessage());
+    }
+
+    @ExceptionHandler({AuthException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiError handleUserRegistrationException(final AuthException e) {
+        log.info(e.getMessage(), e);
+        return new ApiError(HttpStatus.UNAUTHORIZED, e.getReason(), e.getMessage());
     }
 }

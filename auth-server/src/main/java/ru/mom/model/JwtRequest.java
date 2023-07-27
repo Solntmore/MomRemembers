@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Setter
 @Getter
-@Schema(description = "Класс, который пользователь присылает, чтобы получить JWT токен")
+@Schema(description = "Класс, который пользователь присылает, чтобы авторизоваться и получить JWT токен")
 public class JwtRequest {
 
     @NotBlank
