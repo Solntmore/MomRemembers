@@ -36,21 +36,21 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(@NonNull NewUserDto newUserDto) {
 
-        var user = userPersistService.findUser(newUserDto.getLogin());
+        var user = userPersistService.findUserByLoginOrEmail(newUserDto.getLogin(), newUserDto.getEmail());
 
-        if (!user.isEmpty()) {
+        if (!user.isEmpty() && user.get().getLogin().equals(newUserDto.getLogin())) {
+            throw new RegistrationException("Ошибка регистрации", "Пользователь с таким логином уже существует.");
 
-            if (user != null && user.get().getLogin().equals(newUserDto.getLogin())) {
-                throw new RegistrationException("Ошибка регистрации", "Пользователь с таким логином уже существует.");
-            }
+        } else if (!user.isEmpty() && user.get().getEmail().equals(newUserDto.getEmail())) {
+            throw new RegistrationException("Ошибка регистрации", "Пользователь с таким email уже существует.");
 
         } else {
-
             String hash = BCrypt.hashpw(newUserDto.getPassword(), BCrypt.gensalt());
 
             userPersistService.register(
                     new User(newUserDto.getLogin(), hash, newUserDto.getUsername(), newUserDto.getEmail()));
         }
+
     }
 
     @Override

@@ -9,4 +9,6 @@ public interface UserPersistService {
     void register(User user);
 
     Optional<User> findUser(String user);
+
+    Optional<User> findUserByLoginOrEmail(String login, String email);
 }
