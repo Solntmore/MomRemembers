@@ -24,8 +24,8 @@ public class Attachment {
     private Long noteId;
 
     @Lob
-//    @Column(name = "data")                        // for Postgres
-    @Column(name = "data", columnDefinition = "BLOB") // for H2
+    @Column(name = "data")                        // for Postgres
+//    @Column(name = "data", columnDefinition = "BLOB") // for H2
     private byte[] data;
 
     public Attachment() {

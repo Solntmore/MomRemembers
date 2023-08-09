@@ -19,7 +19,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(name = "Auth-controller", description = "Управляет регистраций и авторизацией пользователей")
+@Tag(name = "Auth-controller", description = "Управляет регистрацией и авторизацией пользователей")
 public class AuthController {
 
     private final AuthService authService;
@@ -35,7 +35,7 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Авторизация пользователя",
-            description = "Позволяет авторизовать пользователю")
+            description = "Позволяет авторизовать пользователя")
     public ResponseEntity<JwtResponse> login(@RequestBody @Valid JwtRequest authRequest) {
 
         JwtResponse token = authService.login(authRequest);
