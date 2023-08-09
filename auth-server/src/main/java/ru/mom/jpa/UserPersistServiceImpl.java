@@ -24,4 +24,9 @@ public class UserPersistServiceImpl implements UserPersistService {
     public Optional<User> findUser(String user) {
         return userRepository.findById(user);
     }
+
+    @Override
+    public Optional<User> findUserByLoginOrEmail(String login, String email) {
+        return userRepository.findUserByLoginOrEmail(login, email);
+    }
 }
